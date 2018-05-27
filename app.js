@@ -15,18 +15,8 @@ const argv = yargs
     .alias('help', 'h')
     .argv;
 
-    geocode.geocodeAddress(argv.address, (errorMessage, results) => {
-        if (errorMessage) {
-            console.error(errorMessage);
-            return {errorMessage};
-        } else {
-            console.log(JSON.stringify(results, undefined, 2));
-            weather.getWeather(results, (errorMessage, weatherResults) => {
-                if (errorMessage) {
-                    console.error(errorMessage);
-                } else {
-                    console.log(weatherResults);
-                }
-            })
-        }
-    });
+geocode.geocodeAddress(argv.address)
+    .then(location => weather.getWeather(location)
+        .then(temperature => console.log(temperature))
+        .catch(err => console.error(err)))
+    .catch(err => console.error(err));
